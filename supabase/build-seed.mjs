@@ -5,14 +5,14 @@
  * every product repeats the same TRACK_EVENT + NAVIGATE actions.
  *
  * "Ecommerce Default" is taken as-is from the contract's reference mock
- * (sdui-web/mocks/home-guest.json), so the backend starts by serving
+ * (sdui-web/mocks/home.json), so the backend starts by serving
  * exactly the screen the web client was built against.
  */
 
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const here = (path) => new URL(path, import.meta.url);
-const guest = JSON.parse(readFileSync(here('../../sdui-web/mocks/home-guest.json'), 'utf8'));
+const guest = JSON.parse(readFileSync(here('../../sdui-web/mocks/home.json'), 'utf8'));
 
 /* Helpers ------------------------------------------------------------------ */
 
