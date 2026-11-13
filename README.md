@@ -16,7 +16,7 @@ Next.js 16 · shadcn/ui (Base UI) · Tailwind 4 · Supabase · dnd-kit.
 
 Las secciones no se crean desde el gestor: vienen del catálogo en la base (`sdui_sections`). El texto es de la sección, así que si dos vistas la comparten, cambia en ambas.
 
-El panel de la derecha muestra el JSON que el backend arma para la vista seleccionada (`sdui_layout_payload`), esté en vivo o no.
+El botón «Ver JSON sdui» abre el JSON que el backend arma para la vista seleccionada (`sdui_layout_payload`), esté en vivo o no, y permite copiarlo.
 
 ## Puesta en marcha
 
@@ -70,7 +70,8 @@ Agregar un tema nuevo son tres pasos: una fila en `sdui_themes`, sus tokens en `
 | `app/page.tsx` | Lista de pantallas |
 | `app/screens/[screenId]/page.tsx` | Carga los datos de una pantalla |
 | `app/actions.ts` | Todas las escrituras (Server Functions) |
-| `components/screen-manager.tsx` | El gestor: vistas, editor y JSON |
+| `components/screen-manager.tsx` | El gestor: vistas y editor |
+| `components/payload-dialog.tsx` | Diálogo con el JSON sdui de una vista |
 | `components/wording-sheet.tsx` | Formulario de textos de una sección |
 | `lib/wording.ts` | Encuentra los textos editables en los `props` |
 | `lib/data.ts`, `lib/supabase.ts` | Lecturas y cliente de Supabase (solo servidor) |

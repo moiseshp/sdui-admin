@@ -19,7 +19,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
     <html lang="es" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-muted/40">
         <header className="sticky top-0 z-30 border-b bg-background">
-          <div className="mx-auto flex h-12 max-w-[1500px] items-center justify-between px-4">
+          <div className="mx-auto flex h-12 max-w-5xl items-center justify-between px-4">
             <Link href="/" className="flex items-center gap-2 font-semibold">
               <span className="rounded-md bg-primary px-1.5 py-0.5 font-mono text-xs text-primary-foreground">SDUI</span>
               Admin
@@ -29,7 +29,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
             </a>
           </div>
         </header>
-        <main className="mx-auto w-full max-w-[1500px] flex-1 px-4 py-6">{children}</main>
+        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">{children}</main>
         <Toaster position="top-center" />
       </body>
     </html>

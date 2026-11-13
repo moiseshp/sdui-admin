@@ -8,19 +8,20 @@
  * first and rolled back if the database rejects the change.
  */
 
-import { useEffect, useId, useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { DndContext, KeyboardSensor, PointerSensor, closestCenter, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@/lib/dnd';
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Check, ChevronLeft, Copy, Plus, Radio } from 'lucide-react';
+import { Check, ChevronLeft, Plus, Radio } from 'lucide-react';
 import { toast } from 'sonner';
-import { activateLayout, getLayoutPayload, setLayoutSections, setLayoutSlot, setLayoutTheme, updateSectionProps } from '@/app/actions';
+import { activateLayout, setLayoutSections, setLayoutSlot, setLayoutTheme, updateSectionProps } from '@/app/actions';
 import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import type { ActionResult, AdminData, Layout, Section } from '@/lib/types';
+import { PayloadDialog } from './payload-dialog';
 import { SectionPickerDialog } from './section-picker-dialog';
 import { SortableSectionRow } from './section-row';
 import { ThemeSwatch } from './theme-swatch';
@@ -36,8 +37,6 @@ export function ScreenManager({ initial }: { initial: AdminData }) {
   const [selectedId, setSelectedId] = useState(screen.active_layout_id ?? initial.layouts[0]?.id ?? null);
   const [editing, setEditing] = useState<Section | null>(null);
   const [picker, setPicker] = useState<Picker>({ open: false });
-  /** Bumped after each save, so the payload preview is read again. */
-  const [revision, setRevision] = useState(0);
 
   const sectionById = useMemo(() => new Map(sections.map((s) => [s.id, s])), [sections]);
   const layout = layouts.find((l) => l.id === selectedId) ?? null;
@@ -59,7 +58,6 @@ export function ScreenManager({ initial }: { initial: AdminData }) {
       toast.error('No se guardó el cambio', { description: result.error });
       return false;
     }
-    setRevision((r) => r + 1);
     toast.success(message);
     return true;
   }
@@ -98,7 +96,7 @@ export function ScreenManager({ initial }: { initial: AdminData }) {
         <code className="font-mono text-xs text-muted-foreground">{screen.screen_id}</code>
       </div>
 
-      <div className="grid items-start gap-6 lg:grid-cols-[17rem_minmax(0,1fr)] xl:grid-cols-[17rem_minmax(0,1fr)_26rem]">
+      <div className="grid items-start gap-6 lg:grid-cols-[17rem_minmax(0,1fr)]">
         {/* Layouts ---------------------------------------------------------- */}
         <section aria-labelledby="layouts-title">
           <h2 id="layouts-title" className="mb-2 text-sm font-medium text-muted-foreground">
@@ -148,6 +146,7 @@ export function ScreenManager({ initial }: { initial: AdminData }) {
               </h2>
               <p className="text-sm text-muted-foreground">{layout.description}</p>
             </div>
+            <PayloadDialog key={layout.id} layoutId={layout.id} layoutName={layout.name} isLive={isLive} />
             {isLive ? (
               <Badge className="h-8 bg-emerald-600 px-3 text-sm text-white">
                 <Check /> En vivo
@@ -255,9 +254,6 @@ export function ScreenManager({ initial }: { initial: AdminData }) {
             onEdit={setEditing}
           />
         </section>
-
-        {/* Payload ---------------------------------------------------------- */}
-        <PayloadPreview key={layout.id} layoutId={layout.id} isLive={isLive} revision={revision} />
       </div>
 
       <WordingSheet
@@ -404,47 +400,5 @@ function SortableBody({
         </ul>
       </SortableContext>
     </DndContext>
-  );
-}
-
-/** The Screen JSON the backend builds for this layout: what a client would receive. */
-function PayloadPreview({ layoutId, isLive, revision }: { layoutId: string; isLive: boolean; revision: number }) {
-  const [state, setState] = useState<{ json: string | null; error: string | null }>({ json: null, error: null });
-
-  useEffect(() => {
-    let cancelled = false;
-    getLayoutPayload(layoutId)
-      .then((result) => {
-        if (cancelled) return;
-        setState(result.ok ? { json: JSON.stringify(result.data, null, 2), error: null } : { json: null, error: result.error });
-      })
-      .catch(() => !cancelled && setState({ json: null, error: 'No se pudo conectar con el servidor.' }));
-    return () => {
-      cancelled = true;
-    };
-  }, [layoutId, revision]);
-
-  return (
-    <section aria-labelledby="payload-title" className="lg:col-span-2 xl:sticky xl:top-18 xl:col-span-1">
-      <div className="mb-2 flex items-center gap-2">
-        <h2 id="payload-title" className="flex-1 text-sm font-medium text-muted-foreground">
-          {isLive ? 'JSON que recibe el cliente' : 'JSON de esta vista (no está en vivo)'}
-        </h2>
-        <Button
-          variant="ghost"
-          size="sm"
-          disabled={!state.json}
-          onClick={() => {
-            if (!state.json) return;
-            void navigator.clipboard.writeText(state.json).then(() => toast.success('JSON copiado'));
-          }}
-        >
-          <Copy /> Copiar
-        </Button>
-      </div>
-      <pre className="max-h-[calc(100dvh-9rem)] overflow-auto rounded-xl border bg-zinc-950 p-3 font-mono text-xs leading-relaxed text-zinc-100">
-        {state.error ? <span className="text-red-300">{state.error}</span> : (state.json ?? 'Cargando…')}
-      </pre>
-    </section>
   );
 }

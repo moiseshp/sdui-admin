@@ -60,6 +60,34 @@ async function ScreenList() {
           </Link>
         </li>
       ))}
+      {UPCOMING_SCREENS.map((screen) => (
+        <li key={screen.screen_id}>
+          {/* Not a link: these screens do not exist in the database yet. */}
+          <div
+            aria-disabled="true"
+            className="flex cursor-not-allowed items-center gap-4 rounded-xl border border-dashed bg-card/50 p-4 opacity-60"
+          >
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <span className="font-medium">{screen.name}</span>
+                <code className="font-mono text-xs text-muted-foreground">{screen.screen_id}</code>
+              </div>
+              <div className="mt-1.5 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                <Badge variant="outline">WIP</Badge>
+                <span>{screen.description}</span>
+              </div>
+            </div>
+          </div>
+        </li>
+      ))}
     </ul>
   );
 }
+
+/**
+ * Next screens on the roadmap. Visual only: they show that the manager will
+ * list more screens; they are not in the database and cannot be opened.
+ */
+const UPCOMING_SCREENS = [
+  { screen_id: 'menu', name: 'PLP', description: 'Categorías y productos por campaña o franja horaria' },
+];
