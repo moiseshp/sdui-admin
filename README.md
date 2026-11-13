@@ -50,7 +50,7 @@ Una **vista** (`sdui_layouts`) es una lista propia de secciones. Un **tema** (`s
 
 | Vista | Tema | Idea |
 |---|---|---|
-| Ecommerce Default | `default` | Idéntica al mock de referencia `docs/mocks/examples/home-guest.json` |
+| Ecommerce Default | `default` | Idéntica al mock de referencia `sdui-web/mocks/home-guest.json` |
 | San Valentín | `valentine` | Campaña del 14 de febrero, con sus secciones y wording |
 | Ecommerce Rush | `rush` | Flash sale: descuentos agresivos y urgencia |
 | Noche de Partido | `default` | Combos para grupos; mismo color de marca, otra pantalla |

@@ -5,14 +5,14 @@
  * every product repeats the same TRACK_EVENT + NAVIGATE actions.
  *
  * "Ecommerce Default" is taken as-is from the contract's reference mock
- * (docs/mocks/examples/home-guest.json), so the backend starts by serving
+ * (sdui-web/mocks/home-guest.json), so the backend starts by serving
  * exactly the screen the web client was built against.
  */
 
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const here = (path) => new URL(path, import.meta.url);
-const guest = JSON.parse(readFileSync(here('../../docs/mocks/examples/home-guest.json'), 'utf8'));
+const guest = JSON.parse(readFileSync(here('../../sdui-web/mocks/home-guest.json'), 'utf8'));
 
 /* Helpers ------------------------------------------------------------------ */
 
@@ -32,6 +32,7 @@ const img = {
 const LOGO = { imageUrl: 'https://www.kfc.com.pe/images/kfc/logo.svg', alt: 'KFC' };
 
 const track = (name, params) => ({ type: 'TRACK_EVENT', payload: params ? { name, params } : { name } });
+const showMessage = (title, message) => ({ type: 'SHOW_MESSAGE', payload: { title, message } });
 const toProduct = (id) => ({ type: 'NAVIGATE', payload: { route: 'product_detail', params: { id } } });
 
 const product = (id, name, description, priceLabel, imageUrl, extra = {}) => ({
@@ -46,7 +47,7 @@ const product = (id, name, description, priceLabel, imageUrl, extra = {}) => ({
 
 const headerButtons = [
   { icon: 'user', label: 'Mi cuenta', actions: { onPress: [track('header_click', { button: 'user' })] } },
-  { icon: 'cart', label: 'Carrito', actions: { onPress: [track('header_click', { button: 'cart' })] } },
+  { icon: 'cart', label: 'Carrito', actions: { onPress: [track('header_click', { button: 'cart' }), showMessage('Tu carrito está vacío', 'Agrega un producto del menú para empezar tu pedido.')] } },
 ];
 
 const cta = (label, promoId, productId) => ({
